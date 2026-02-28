@@ -1,38 +1,82 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import {
+  ngos,
+  rescueCases,
+  pets,
+  diseaseScans,
+  type Ngo,
+  type InsertNgo,
+  type RescueCase,
+  type InsertRescueCase,
+  type UpdateRescueCase,
+  type Pet,
+  type InsertPet,
+  type UpdatePet,
+  type DiseaseScan,
+  type InsertDiseaseScan
+} from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // NGOs
+  getNgos(): Promise<Ngo[]>;
+  createNgo(ngo: InsertNgo): Promise<Ngo>;
+
+  // Cases
+  getCases(): Promise<RescueCase[]>;
+  createCase(rescueCase: InsertRescueCase): Promise<RescueCase>;
+  updateCase(id: number, updates: UpdateRescueCase): Promise<RescueCase>;
+
+  // Pets
+  getPets(): Promise<Pet[]>;
+  createPet(pet: InsertPet): Promise<Pet>;
+  updatePet(id: number, updates: UpdatePet): Promise<Pet>;
+
+  // Scans
+  getScans(): Promise<DiseaseScan[]>;
+  createScan(scan: InsertDiseaseScan): Promise<DiseaseScan>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async getNgos(): Promise<Ngo[]> {
+    return await db.select().from(ngos);
+  }
+  async createNgo(ngo: InsertNgo): Promise<Ngo> {
+    const [newNgo] = await db.insert(ngos).values(ngo).returning();
+    return newNgo;
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getCases(): Promise<RescueCase[]> {
+    return await db.select().from(rescueCases);
+  }
+  async createCase(rescueCase: InsertRescueCase): Promise<RescueCase> {
+    const [newCase] = await db.insert(rescueCases).values(rescueCase).returning();
+    return newCase;
+  }
+  async updateCase(id: number, updates: UpdateRescueCase): Promise<RescueCase> {
+    const [updated] = await db.update(rescueCases).set(updates).where(eq(rescueCases.id, id)).returning();
+    return updated;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getPets(): Promise<Pet[]> {
+    return await db.select().from(pets);
+  }
+  async createPet(pet: InsertPet): Promise<Pet> {
+    const [newPet] = await db.insert(pets).values(pet).returning();
+    return newPet;
+  }
+  async updatePet(id: number, updates: UpdatePet): Promise<Pet> {
+    const [updated] = await db.update(pets).set(updates).where(eq(pets.id, id)).returning();
+    return updated;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async getScans(): Promise<DiseaseScan[]> {
+    return await db.select().from(diseaseScans);
+  }
+  async createScan(scan: InsertDiseaseScan): Promise<DiseaseScan> {
+    const [newScan] = await db.insert(diseaseScans).values(scan).returning();
+    return newScan;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

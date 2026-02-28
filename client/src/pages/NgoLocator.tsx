@@ -1,145 +1,85 @@
 import { useState } from "react";
-import { useNgos, useCreateNgo } from "@/hooks/use-ngos";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MapPin, Phone, Mail, Plus, Search, Building2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertNgoSchema } from "@shared/schema";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { z } from "zod";
+import { MapPin, Phone, Bell } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+const MOCK_NGOS = [
+  {
+    id: 1,
+    name: "Blue Cross of India",
+    distance: "1.2 km away",
+    phone: "+91 44 2235 4959",
+    address: "72, Velachery Rd, Guindy, Chennai"
+  },
+  {
+    id: 2,
+    name: "PFA Chennai",
+    distance: "3.5 km away",
+    phone: "+91 44 2496 5555",
+    address: "Besant Nagar, Chennai"
+  },
+  {
+    id: 3,
+    name: "Scan Foundation",
+    distance: "5.8 km away",
+    phone: "+91 94444 44444",
+    address: "Kilpauk, Chennai"
+  }
+];
 
 export default function NgoLocator() {
-  const { data: ngos, isLoading } = useNgos();
-  const { mutate: createNgo, isPending } = useCreateNgo();
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
-
-  const form = useForm<z.infer<typeof insertNgoSchema>>({
-    resolver: zodResolver(insertNgoSchema),
-    defaultValues: { name: "", address: "", phone: "", email: "", description: "" },
-  });
-
-  const onSubmit = (data: z.infer<typeof insertNgoSchema>) => {
-    createNgo(data, {
-      onSuccess: () => {
-        setOpen(false);
-        form.reset();
-      }
-    });
-  };
-
-  const filteredNgos = ngos?.filter(ngo => 
-    ngo.name.toLowerCase().includes(search.toLowerCase()) || 
-    ngo.address.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">NGO Locator</h1>
-          <p className="text-muted-foreground mt-1">Connect with registered animal welfare organizations.</p>
-        </div>
-        
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90 rounded-xl shadow-md h-11">
-              <Plus className="w-4 h-4 mr-2" /> Register NGO
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] rounded-2xl">
-            <DialogHeader>
-              <DialogTitle className="font-display text-xl">Register Organization</DialogTitle>
-              <DialogDescription>Add a new animal welfare NGO to the public directory.</DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem><FormLabel>Organization Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="address" render={({ field }) => (
-                  <FormItem><FormLabel>Full Address</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField control={form.control} name="phone" render={({ field }) => (
-                    <FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                </div>
-                <FormField control={form.control} name="description" render={({ field }) => (
-                  <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea className="resize-none" rows={3} {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <Button type="submit" className="w-full h-11 mt-2" disabled={isPending}>
-                  {isPending ? "Registering..." : "Submit Registration"}
-                </Button>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+    <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
+      <div className="text-center md:text-left">
+        <h1 className="text-3xl font-bold text-primary mb-2">NGO Locator</h1>
+        <p className="text-muted-foreground">Find and notify nearby animal welfare organizations in Chennai.</p>
       </div>
 
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-        <Input 
-          placeholder="Search by name or location..." 
-          className="pl-10 h-12 rounded-xl bg-card border-border/60"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <Card className="overflow-hidden border-2 shadow-lg">
+        <div className="aspect-video w-full min-h-[400px]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124403.24355755141!2d80.1411394553228!3d13.04752545585501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5265ea4f7d3361%3A0x6e61a70b6863d433!2sChennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1709123456789!5m2!1sen!2sin"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {MOCK_NGOS.map((ngo) => (
+          <Card key={ngo.id} className="hover-elevate border-border/50">
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-xl font-bold">{ngo.name}</CardTitle>
+                <Badge variant="secondary" className="bg-primary/5 text-primary border-primary/10">
+                  {ngo.distance}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  <span>{ngo.address}</span>
+                </div>
+                <div className="flex items-center gap-2 font-medium text-foreground">
+                  <Phone className="w-4 h-4 text-primary" />
+                  <span>{ngo.phone}</span>
+                </div>
+              </div>
+              <Button className="w-full bg-[#1F4E79] hover:bg-[#1F4E79]/90 text-white gap-2 font-semibold h-11">
+                <Bell className="w-4 h-4" />
+                Notify NGO
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {[1,2,3,4,5].map(i => <div key={i} className="h-64 bg-card rounded-2xl animate-pulse"></div>)}
-        </div>
-      ) : filteredNgos?.length === 0 ? (
-        <div className="text-center py-20">
-          <Building2 className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold">No NGOs found</h3>
-          <p className="text-muted-foreground">Try adjusting your search query.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredNgos?.map((ngo) => (
-            <Card key={ngo.id} className="overflow-hidden rounded-2xl hover-elevate border-border/50">
-              <div className="h-2 bg-primary w-full"></div>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-bold text-foreground leading-tight pr-4">{ngo.name}</h3>
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                    <Building2 className="w-5 h-5" />
-                  </div>
-                </div>
-                
-                <p className="text-muted-foreground text-sm mb-6 line-clamp-2 min-h-[40px]">
-                  {ngo.description}
-                </p>
-
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-start gap-3 text-foreground/80">
-                    <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>{ngo.address}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-foreground/80">
-                    <Phone className="w-4 h-4 text-primary shrink-0" />
-                    <span>{ngo.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-foreground/80">
-                    <Mail className="w-4 h-4 text-primary shrink-0" />
-                    <span>{ngo.email}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

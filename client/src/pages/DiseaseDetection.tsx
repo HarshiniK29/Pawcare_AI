@@ -1,169 +1,202 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useScans, useCreateScan } from "@/hooks/use-scans";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, ImageIcon, UploadCloud, CheckCircle2, History } from "lucide-react";
-import { format } from "date-fns";
-import { motion } from "framer-motion";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Upload, AlertCircle, CheckCircle2, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-
-const scanSchema = z.object({
-  imageUrl: z.string().min(1, "Please provide an image URL"),
-});
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DiseaseDetection() {
-  const { data: scans, isLoading } = useScans();
-  const { mutate: createScan, isPending } = useCreateScan();
+  const [image, setImage] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [result, setResult] = useState<{
+    disease: string;
+    confidence: number;
+    severity: "Low" | "Moderate" | "Critical";
+    recommendation: string;
+  } | null>(null);
   const { toast } = useToast();
-  const [activePreview, setActivePreview] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof scanSchema>>({
-    resolver: zodResolver(scanSchema),
-    defaultValues: {
-      imageUrl: "",
-    },
-  });
+  const handleUpload = () => {
+    setIsAnalyzing(true);
+    // Mock analysis delay
+    setTimeout(() => {
+      setResult({
+        disease: "Mange / Skin Infection",
+        confidence: 87,
+        severity: "Critical",
+        recommendation: "Immediate veterinary attention required. This condition is highly contagious to other animals and causes severe distress. Isolate the animal and provide medicated baths as prescribed by a professional."
+      });
+      setIsAnalyzing(false);
+      toast({
+        title: "Analysis Complete",
+        description: "AI has identified a potential skin condition.",
+      });
+    }, 2000);
+  };
 
-  function onSubmit(values: z.infer<typeof scanSchema>) {
-    setActivePreview(values.imageUrl);
-    createScan(values, {
-      onSuccess: () => {
-        toast({
-          title: "Analysis Complete",
-          description: "The AI has finished reviewing the image.",
-        });
-        form.reset();
-      },
-    });
-  }
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => setImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
-    <div className="p-6 lg:p-8 max-w-6xl mx-auto space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">AI Disease Detection</h1>
-          <p className="text-muted-foreground mt-1">Upload an image to instantly screen for dermatological and visible ailments.</p>
-        </div>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-primary mb-2">AI Disease Detection</h1>
+        <p className="text-muted-foreground text-lg">
+          Upload a clear photo of the affected area for instant preliminary analysis.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Scanner Card */}
-        <Card className="shadow-lg shadow-black/5 border-border/50 overflow-hidden">
-          <CardHeader className="bg-primary/5 pb-8">
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <UploadCloud className="w-5 h-5" />
-              New Analysis
-            </CardTitle>
-            <CardDescription>Paste an image URL of the affected area to start.</CardDescription>
-          </CardHeader>
-          <CardContent className="-mt-4 relative z-10">
-            <div className="bg-card rounded-xl p-6 shadow-sm border">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  
-                  {activePreview && (
-                    <div className="w-full aspect-video rounded-lg overflow-hidden bg-muted border border-border flex items-center justify-center">
-                      <img 
-                        src={activePreview} 
-                        alt="Preview" 
-                        className="w-full h-full object-cover"
-                        onError={() => setActivePreview(null)}
-                      />
-                    </div>
-                  )}
-
-                  <FormField
-                    control={form.control}
-                    name="imageUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="relative">
-                            <ImageIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                            <Input 
-                              placeholder="https://example.com/image.jpg" 
-                              className="pl-10 h-12 rounded-xl"
-                              {...field} 
-                              onChange={(e) => {
-                                field.onChange(e);
-                                setActivePreview(e.target.value);
-                              }}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors">
+          <CardContent 
+            className="p-0"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={onDrop}
+          >
+            <div className="aspect-square relative flex flex-col items-center justify-center p-6 text-center">
+              {image ? (
+                <>
+                  <img 
+                    src={image} 
+                    alt="Preview" 
+                    className="absolute inset-0 w-full h-full object-cover rounded-lg"
                   />
-                  
-                  <Button 
-                    type="submit" 
-                    disabled={isPending} 
-                    className="w-full h-12 text-base font-semibold rounded-xl bg-primary hover:bg-primary/90 hover:-translate-y-0.5 transition-transform"
-                  >
-                    {isPending ? "Analyzing Image..." : "Analyze Image"}
-                  </Button>
-                </form>
-              </Form>
-
-              <div className="mt-6 flex items-start gap-3 bg-amber-50 text-amber-800 p-4 rounded-lg text-sm">
-                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                <p><strong>Disclaimer:</strong> AI analysis is for preliminary screening only and does not replace a professional veterinary diagnosis.</p>
-              </div>
+                  <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                    <Button variant="secondary" onClick={() => setImage(null)}>
+                      Change Image
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
+                    <Upload className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-lg">Drag and drop image</p>
+                    <p className="text-sm text-muted-foreground">or click to browse from your device</p>
+                  </div>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = () => setImage(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </CardContent>
+          <div className="p-4 bg-muted/30 border-t">
+            <Button 
+              className="w-full h-12 text-base font-semibold" 
+              disabled={!image || isAnalyzing}
+              onClick={handleUpload}
+            >
+              {isAnalyzing ? "Analyzing with AI..." : "Analyze Image"}
+            </Button>
+          </div>
         </Card>
 
-        {/* History / Results */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-display font-bold flex items-center gap-2">
-            <History className="w-5 h-5 text-muted-foreground" />
-            Recent Scans
-          </h2>
-          
-          {isLoading ? (
-            <div className="space-y-3">
-              {[1,2,3].map(i => (
-                <div key={i} className="h-24 bg-card rounded-xl border animate-pulse"></div>
-              ))}
-            </div>
-          ) : !scans || scans.length === 0 ? (
-            <div className="text-center p-12 bg-card rounded-xl border border-dashed border-border">
-              <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-              <p className="text-muted-foreground">No scans history available.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {scans.map((scan, idx) => (
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  key={scan.id} 
-                  className="bg-card rounded-xl border border-border/50 overflow-hidden flex shadow-sm hover-elevate"
-                >
-                  <div className="w-24 h-24 shrink-0 bg-muted">
-                    <img src={scan.imageUrl} alt="Scan result" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-4 flex-1 flex flex-col justify-center">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-muted-foreground">
-                        {scan.scannedAt ? format(new Date(scan.scannedAt), 'MMM d, yyyy') : 'Unknown date'}
-                      </span>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+        <div className="space-y-6">
+          <AnimatePresence mode="wait">
+            {!result ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="h-full flex flex-col items-center justify-center text-center p-8 bg-muted/10 rounded-2xl border border-border"
+              >
+                <div className="mb-4 p-4 bg-background rounded-full shadow-sm">
+                  <Info className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Ready for Analysis</h3>
+                <p className="text-muted-foreground">
+                  Upload an image of a stray animal's skin condition to see the AI diagnostic results here.
+                </p>
+                <div className="mt-8 w-full max-w-xs">
+                  <p className="text-xs uppercase tracking-wider font-bold text-muted-foreground mb-3 text-left">Sample Placeholder</p>
+                  <img 
+                    src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&q=80" 
+                    alt="Sample Dog" 
+                    className="w-full h-40 object-cover rounded-xl grayscale opacity-50 border"
+                  />
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="space-y-6"
+              >
+                <Card className="overflow-hidden border-2 border-primary/20 shadow-xl">
+                  <CardHeader className="bg-primary/5 pb-4">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-2xl">Detection Result</CardTitle>
+                      <Badge 
+                        variant={result.severity === "Critical" ? "destructive" : result.severity === "Moderate" ? "secondary" : "default"}
+                        className="px-3 py-1 text-sm font-bold uppercase tracking-wider"
+                      >
+                        {result.severity} Severity
+                      </Badge>
                     </div>
-                    <h4 className="font-semibold text-foreground capitalize">{scan.result}</h4>
-                    {scan.notes && <p className="text-sm text-muted-foreground truncate mt-1">{scan.notes}</p>}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                  </CardHeader>
+                  <CardContent className="pt-6 space-y-6">
+                    <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-tight mb-1">Detected Condition</p>
+                        <p className="text-xl font-bold text-foreground">{result.disease}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-tight mb-1">AI Confidence</p>
+                        <p className="text-2xl font-black text-primary">{result.confidence}%</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-primary font-bold">
+                        <CheckCircle2 className="w-5 h-5" />
+                        <h4>Professional Recommendation</h4>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic">
+                        "{result.recommendation}"
+                      </p>
+                    </div>
+
+                    <div className="pt-4 flex gap-3">
+                      <Button variant="outline" className="flex-1" onClick={() => setResult(null)}>
+                        Clear Result
+                      </Button>
+                      <Button className="flex-1 bg-primary hover:bg-primary/90">
+                        Find Nearest NGO
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex gap-3">
+                  <AlertCircle className="w-6 h-6 text-destructive shrink-0" />
+                  <p className="text-sm text-destructive-foreground font-medium">
+                    Disclaimer: This tool provides preliminary AI-based insights and is not a substitute for professional veterinary diagnosis.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

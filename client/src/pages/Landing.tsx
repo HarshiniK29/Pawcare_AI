@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Stethoscope, AlertCircle, Heart, Map, ArrowRight } from "lucide-react";
+import { Stethoscope, AlertCircle, Heart, Map, ArrowRight, PawPrint } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Landing() {
@@ -13,18 +13,18 @@ export default function Landing() {
       color: "bg-blue-50 text-blue-600"
     },
     {
-      title: "Emergency Response",
-      description: "Report injured animals and track rescue operations in real-time.",
-      icon: AlertCircle,
-      link: "/cases",
-      color: "bg-red-50 text-red-600"
-    },
-    {
-      title: "NGO Directory",
+      title: "NGO Locator",
       description: "Find and connect with verified animal welfare organizations near you.",
       icon: Map,
       link: "/ngo-locator",
       color: "bg-emerald-50 text-emerald-600"
+    },
+    {
+      title: "Case Tracker",
+      description: "Report injured animals and track rescue operations in real-time.",
+      icon: AlertCircle,
+      link: "/cases",
+      color: "bg-red-50 text-red-600"
     },
     {
       title: "Adoption Portal",
@@ -37,7 +37,27 @@ export default function Landing() {
 
   return (
     <div className="min-h-full pb-16">
-      {/* landing page hero cute golden retriever */}
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-border px-6 lg:px-12 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
+            <PawPrint className="w-5 h-5" />
+          </div>
+          <span className="font-display font-bold text-xl tracking-tight text-primary">PawCare AI</span>
+        </div>
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
+          <Link href="/disease-detection" className="text-sm font-medium hover:text-primary transition-colors">Detection</Link>
+          <Link href="/ngo-locator" className="text-sm font-medium hover:text-primary transition-colors">NGOs</Link>
+          <Link href="/cases" className="text-sm font-medium hover:text-primary transition-colors">Cases</Link>
+          <Link href="/adoption" className="text-sm font-medium hover:text-primary transition-colors">Adoption</Link>
+        </div>
+        <Link href="/cases">
+          <Button size="sm" className="rounded-full px-5">Report an Animal</Button>
+        </Link>
+      </nav>
+
+      {/* Hero Section */}
       <div className="relative h-[60vh] min-h-[500px] w-full flex items-center overflow-hidden rounded-b-[2.5rem] shadow-xl">
         <div className="absolute inset-0 z-0">
           <img 
@@ -60,21 +80,21 @@ export default function Landing() {
               AI-Powered Animal Welfare
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight">
-              Every Life <br/>
-              <span className="text-accent">Deserves Care.</span>
+              AI-Powered <br/>
+              <span className="text-accent">Stray Animal Healthcare</span>
             </h1>
             <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl">
               Empowering communities with AI-driven disease detection, emergency rescue tracking, and seamless adoption matching.
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-4">
-              <Link href="/disease-detection">
+              <Link href="/cases">
                 <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary-foreground font-semibold rounded-xl px-8 h-14 text-base shadow-lg shadow-accent/25 hover:-translate-y-0.5 transition-transform">
-                  Try AI Scanner <ArrowRight className="ml-2 w-5 h-5" />
+                  Report an Animal <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/cases">
+              <Link href="/disease-detection">
                 <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 font-semibold rounded-xl px-8 h-14 text-base backdrop-blur-sm">
-                  Report Emergency
+                  Try AI Scanner
                 </Button>
               </Link>
             </div>

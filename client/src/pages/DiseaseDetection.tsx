@@ -192,11 +192,11 @@ export default function DiseaseDetection() {
                 </Card>
 
                 <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex gap-3">
-                  <AlertCircle className="w-6 h-6 text-destructive shrink-0" />
-                  <p className="text-sm text-destructive-foreground font-medium">
-                    Disclaimer: This tool provides preliminary AI-based insights and is not a substitute for professional veterinary diagnosis.
-                  </p>
-                </div>
+  <AlertCircle className="w-6 h-6 text-destructive shrink-0" />
+  <p className="text-sm text-black font-medium">
+    Disclaimer: This tool provides preliminary AI-based insights and is not a substitute for professional veterinary diagnosis.
+  </p>
+</div>
               </motion.div>
             )}
           </AnimatePresence>

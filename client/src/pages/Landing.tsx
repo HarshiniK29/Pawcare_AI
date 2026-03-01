@@ -38,49 +38,59 @@ export default function Landing() {
   return (
     <div className="min-h-full pb-16">
       {/* Hero Section */}
-      <div className="relative h-[60vh] min-h-[500px] w-full flex items-center overflow-hidden rounded-b-[2.5rem] shadow-xl">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1920&q=80" 
-            alt="Happy dog" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--primary))]/95 via-[hsl(var(--primary))]/80 to-transparent"></div>
+<div className="relative w-full px-6 lg:px-12 pt-8">
+  <div className="relative h-[70vh] min-h-[560px] w-full flex items-center overflow-hidden rounded-[3rem] shadow-lg">
+    
+    {/* Background Image */}
+    <div className="absolute inset-0 z-0">
+      <img 
+        src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1920&q=80" 
+        alt="Happy dog" 
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--primary))]/95 via-[hsl(var(--primary))]/85 to-transparent"></div>
+    </div>
+
+    {/* Content */}
+    <div className="relative z-10 w-full max-w-5xl mx-auto">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-2xl text-white space-y-6"
+      >
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-sm font-medium">
+          <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+          AI-Powered Animal Welfare
         </div>
-        
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 lg:px-12">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-2xl text-white space-y-6"
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-sm font-medium">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-              AI-Powered Animal Welfare
-            </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight">
-              AI-Powered <br/>
-              <span className="text-accent">Stray Animal Healthcare</span>
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl">
-              Empowering communities with AI-driven disease detection, emergency rescue tracking, and seamless adoption matching.
-            </p>
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <Link href="/cases">
-                <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary-foreground font-semibold rounded-xl px-8 h-14 text-base shadow-lg shadow-accent/25 hover:-translate-y-0.5 transition-transform">
-                  Report an Animal <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/disease-detection">
-                <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 font-semibold rounded-xl px-8 h-14 text-base backdrop-blur-sm">
-                  Try AI Scanner
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
+
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-tight">
+          AI-Powered <br/>
+          <span className="text-accent">Stray Animal Healthcare</span>
+        </h1>
+
+        <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl">
+          Empowering communities with AI-driven disease detection, emergency rescue tracking, and seamless adoption matching.
+        </p>
+
+        <div className="flex flex-wrap items-center gap-4 pt-4">
+          <Link href="/cases">
+            <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary-foreground font-semibold rounded-xl px-8 h-14 text-base shadow-lg shadow-accent/25 hover:-translate-y-0.5 transition-transform">
+              Report an Animal <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
+
+          <Link href="/disease-detection">
+            <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 font-semibold rounded-xl px-8 h-14 text-base backdrop-blur-sm">
+              Try AI Scanner
+            </Button>
+          </Link>
         </div>
-      </div>
+      </motion.div>
+    </div>
+
+  </div>
+</div>
 
       <div className="px-6 lg:px-12 py-20 max-w-7xl mx-auto">
         <div className="text-center mb-16">

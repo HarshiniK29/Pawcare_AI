@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,10 +79,12 @@ export default function AdoptionPortal() {
                   <span className="bg-muted px-2 py-1 rounded">{pet.species}</span>
                   <span className="bg-muted px-2 py-1 rounded">{pet.age}</span>
                 </div>
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white gap-2 font-bold h-11 rounded-xl shadow-lg shadow-green-600/20">
-                  <Heart className="w-4 h-4 fill-current" />
-                  Adopt Me
-                </Button>
+                <Link href="/adoption" className="w-full">
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white gap-2 font-bold h-11 rounded-xl shadow-lg shadow-green-600/20">
+                    <Heart className="w-4 h-4 fill-current" />
+                    Adopt Me
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </motion.div>

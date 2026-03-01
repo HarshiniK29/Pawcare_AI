@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Bell } from "lucide-react";
@@ -72,10 +73,12 @@ export default function NgoLocator() {
                   <span>{ngo.phone}</span>
                 </div>
               </div>
-              <Button className="w-full bg-[#1F4E79] hover:bg-[#1F4E79]/90 text-white gap-2 font-semibold h-11">
-                <Bell className="w-4 h-4" />
-                Notify NGO
-              </Button>
+              <Link href="/cases" className="w-full">
+                <Button className="w-full bg-[#1F4E79] hover:bg-[#1F4E79]/90 text-white gap-2 font-semibold h-11">
+                  <Bell className="w-4 h-4" />
+                  Notify NGO
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         ))}

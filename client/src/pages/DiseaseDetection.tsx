@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, AlertCircle, CheckCircle2, Info } from "lucide-react";
@@ -181,9 +182,11 @@ export default function DiseaseDetection() {
                       <Button variant="outline" className="flex-1" onClick={() => setResult(null)}>
                         Clear Result
                       </Button>
-                      <Button className="flex-1 bg-primary hover:bg-primary/90">
-                        Find Nearest NGO
-                      </Button>
+                      <Link href="/ngo-locator" className="flex-1">
+                        <Button className="w-full bg-primary hover:bg-primary/90">
+                          Find Nearest NGO
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>

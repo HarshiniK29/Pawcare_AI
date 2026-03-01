@@ -37,26 +37,6 @@ export default function Landing() {
 
   return (
     <div className="min-h-full pb-16">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-border px-6 lg:px-12 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
-            <PawPrint className="w-5 h-5" />
-          </div>
-          <span className="font-display font-bold text-xl tracking-tight text-primary">PawCare AI</span>
-        </div>
-        <div className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
-          <Link href="/disease-detection" className="text-sm font-medium hover:text-primary transition-colors">Detection</Link>
-          <Link href="/ngo-locator" className="text-sm font-medium hover:text-primary transition-colors">NGOs</Link>
-          <Link href="/cases" className="text-sm font-medium hover:text-primary transition-colors">Cases</Link>
-          <Link href="/adoption" className="text-sm font-medium hover:text-primary transition-colors">Adoption</Link>
-        </div>
-        <Link href="/cases">
-          <Button size="sm" className="rounded-full px-5">Report an Animal</Button>
-        </Link>
-      </nav>
-
       {/* Hero Section */}
       <div className="relative h-[60vh] min-h-[500px] w-full flex items-center overflow-hidden rounded-b-[2.5rem] shadow-xl">
         <div className="absolute inset-0 z-0">
